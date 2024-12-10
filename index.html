@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Christmas Rätsl</title>
-    <!-- Font Awesome für das Haus-Icon -->
+    <title>Christmas Rätsel</title>
+    <!-- Font Awesome für Icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
         body {
@@ -16,10 +16,10 @@
             height: 100vh;
             margin: 0;
             background-color: #f4f4f9;
-            overflow: hidden; /* Verhindert Scrollen */
+            overflow: hidden;
         }
 
-        /* Container für den Hintergrund */
+        /* Hintergrund */
         .background {
             position: absolute;
             top: 0;
@@ -29,17 +29,30 @@
             background-image: url('https://cdn-thumbs.ohmyprints.net/1/e7ffb7f128c8627c0744171ee3df3c6c/817x600/thumbnail/fit.jpg');
             background-size: cover;
             background-position: center;
-            filter: blur(8px); /* Unschärfe-Effekt nur auf das Bild anwenden */
-            z-index: -1; /* Hintergrundbild hinter allen anderen Inhalten anzeigen */
+            filter: blur(8px);
+            z-index: -1;
+        }
+
+        /* Passwortformular */
+        #passwordForm {
+            z-index: 1;
+            position: relative;
+            padding: 25px 40px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            min-width: 320px;
+            max-width: 500px;
+            text-align: center;
         }
 
         input[type="text"], button {
             padding: 10px;
             margin: 5px;
             font-size: 16px;
-            border-radius: 5px; /* Abgerundete Ecken */
-            border: 1px solid #ccc; /* Rand */
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Leichter Schatten */
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         button {
@@ -56,43 +69,30 @@
         h1 {
             font-size: 1.5rem;
             color: black;
-            display: none; /* Verstecke den Text initial */
             text-align: center;
-            opacity: 0; /* Anfangs unsichtbar */
-            transform: translateY(-30px); /* Anfangs von oben verschoben */
-            transition: opacity 1s ease, transform 1s ease; /* Übergang für Opazität und Bewegung */
-            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3); /* Leichter Textschatten */
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
             padding: 10px;
-            background-color: rgba(255, 255, 255, 0.7); /* Halbtransparenter Hintergrund */
-            border-radius: 8px; /* Abgerundete Ecken */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Schatten für den Text */
         }
 
-        h1.show {
-            opacity: 1; /* Sichtbar, wenn die Klasse 'show' hinzugefügt wird */
-            transform: translateY(0); /* Normal positionieren */
+        /* Hervorgehobener Text auf dem 2. Bildschirm */
+        .highlighted-text {
+            font-size: 1.8rem; /* Größere Schriftgröße */
+            font-weight: bold; /* Fettdruck für den Text */
+            padding: 35px; /* Mehr Padding für einen größeren Kasten */
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 700px; /* Maximale Breite erhöhen */
+            margin: 20px; /* Abstand zum Rand */
         }
 
-        p {
-            margin-left: -30px; /* Verschiebt den Text nach links */
-            font-size: 1.2rem;
-            font-weight: bold;
-            text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2); /* Leichter Textschatten */
+        .highlighted-text .red {
+            color: #ff4d4d;
         }
 
-        #passwordForm {
-            z-index: 1; /* Stellt sicher, dass das Formular vor dem Hintergrund erscheint */
-            position: relative;
-            padding: 25px 20px 25px 40px; /* Mehr Padding links für größere Fläche */
-            background-color: rgba(255, 255, 255, 0.8); /* Leicht durchsichtiger Hintergrund */
-            border-radius: 8px; /* Abgerundete Ecken */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Leichter Schatten für das Formular */
-            min-width: 320px; /* Mindestbreite für das Formular */
-            max-width: 500px; /* Maximale Breite für das Formular */
-            text-align: center; /* Text im Formular zentrieren */
-        }
-
-        /* Haus-Symbol unten rechts */
+        /* Haus-Symbol */
         #homeIcon {
             position: fixed;
             bottom: 20px;
@@ -107,52 +107,101 @@
         }
 
         #homeIcon:hover {
-            background-color: #4cae4c; /* Hover-Effekt für das Symbol */
+            background-color: #4cae4c;
         }
+
+        /* Weihnachtsmann-Button */
+        #santaButton {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            font-size: 30px;
+            background-color: rgba(255, 0, 0, 0.8);
+            color: white;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            display: none; /* Unsichtbar, bis das Passwort korrekt ist */
+        }
+
+        #santaButton:hover {
+            background-color: rgba(200, 0, 0, 0.9);
+        }
+
+        /* Zielseite - Bild statt Text "Hallo" */
+        #santaPage {
+            display: none; /* Standardmäßig ausblenden */
+            width: 100%;
+            height: 100vh;
+            background-image: url('https://imgur.com/a/gVwT01S');
+            background-size: cover;
+            background-position: center;
+        }
+
     </style>
 </head>
 <body>
-    <div class="background"></div> <!-- Hintergrundbild, das verschwommen ist -->
+    <div class="background"></div> <!-- Hintergrundbild -->
 
-    <h1 id="congratulationsText">Herzlichen Glückwunsch, du hast das Rätsel gelöst. Check mal deine E-Mail!</h1> <!-- Text, der angezeigt wird, wenn das Passwort korrekt ist -->
-    
     <div id="passwordForm">
         <h1>Christmas Rätsel</h1>
-        <p>Gib das richtige Lösungswort ein, um zu erfahren ob ihr richtig liegt:</p>
+        <p>Gib das richtige Lösungswort ein, um zu erfahren, ob ihr richtig liegt:</p>
         <input type="text" id="inputField" placeholder="Lösungswort eingeben">
         <button onclick="checkAnswer()">Absenden</button>
     </div>
 
     <!-- Haus-Symbol für den Rückweg zum ersten Bildschirm -->
     <div id="homeIcon" onclick="goHome()">
-        <i class="fas fa-home"></i> <!-- Haus-Icon von Font Awesome -->
+        <i class="fas fa-home"></i>
+    </div>
+
+    <!-- Weihnachtsmann-Button -->
+    <div id="santaButton" onclick="showSantaPage()">
+        🎅
+    </div>
+
+    <!-- Hervorgehobener Text auf der zweiten Seite -->
+    <div id="successMessage" class="highlighted-text" style="display: none;">
+        Herzlichen Glückwunsch, du hast das Rätsel gelöst.<br>
+        Aber was nun?<br>
+        Suche doch mal nach einer versteckten Schaltfläche.<br>
+        <span class="red">Abgesehen von dem Haus.</span>
+    </div>
+
+    <!-- Zielseite mit Bild -->
+    <div id="santaPage">
+        <!-- Hier wird das Bild geladen -->
     </div>
 
     <script>
         function checkAnswer() {
             const userInput = document.getElementById("inputField").value.trim();
-            const correctAnswer = "Ein Auto"; // Das richtige Passwort
+            const correctAnswer = "4"; // Das richtige Passwort
 
             if (userInput === correctAnswer) {
-                // Passwort ist korrekt, zeige die versteckte Nachricht
+                // Passwort ist korrekt
                 document.getElementById("passwordForm").style.display = "none"; // Verstecke das Passwortformular
-                const congratulationsText = document.getElementById("congratulationsText");
-                congratulationsText.style.display = "block"; // Zeige die Glückwunsch-Nachricht
-
-                // Übergangseffekt aktivieren
-                setTimeout(function() {
-                    congratulationsText.classList.add("show");
-                }, 100); // Verzögert das Hinzufügen der 'show'-Klasse, damit der Übergang sichtbar wird
+                document.getElementById("santaButton").style.display = "block"; // Zeige den Weihnachtsmann-Button
+                document.getElementById("successMessage").style.display = "block"; // Zeige die Nachricht
             } else {
                 alert("Falsches Passwort! Versuche es erneut.");
             }
         }
 
-        // Funktion, um zurück zum Anfang zu navigieren
         function goHome() {
-            document.getElementById("congratulationsText").style.display = "none";
-            document.getElementById("passwordForm").style.display = "block"; // Zeige das Formular wieder an
-            document.getElementById("inputField").value = ""; // Lösche den Eingabefeld-Wert
+            document.getElementById("passwordForm").style.display = "block";
+            document.getElementById("inputField").value = ""; // Lösche den Eingabewert
+            document.getElementById("santaButton").style.display = "none"; // Verstecke den Weihnachtsmann-Button
+            document.getElementById("successMessage").style.display = "none"; // Verstecke die Nachricht
+            document.getElementById("santaPage").style.display = "none"; // Verstecke die Zielseite
+        }
+
+        function showSantaPage() {
+            document.getElementById("santaPage").style.display = "block"; // Zeige die Zielseite an
+            document.getElementById("passwordForm").style.display = "none"; // Verstecke das Passwortformular
+            document.getElementById("successMessage").style.display = "none"; // Verstecke die Nachricht
+            document.getElementById("santaButton").style.display = "none"; // Verstecke den Weihnachtsmann-Button
         }
     </script>
 </body>
