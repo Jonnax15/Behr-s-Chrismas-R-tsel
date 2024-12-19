@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Christmas Rätsel</title>
+    <title>Weiterleitungssystem</title>
     <!-- Font Awesome für Icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
@@ -17,9 +17,10 @@
             margin: 0;
             background-color: #f4f4f9;
             overflow: hidden;
+            position: relative;
         }
 
-        /* Hintergrund */
+        /* Hintergrund für alle Seiten */
         .background {
             position: absolute;
             top: 0;
@@ -31,6 +32,29 @@
             background-position: center;
             filter: blur(8px);
             z-index: -1;
+        }
+
+        /* Schneeflocken */
+        .snowflake {
+            position: absolute;
+            top: -10px;
+            background-color: white;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            opacity: 0.8;
+            animation: snow 10s linear infinite;
+        }
+
+        @keyframes snow {
+            0% {
+                transform: translateY(0) translateX(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) translateX(50px);
+                opacity: 0;
+            }
         }
 
         /* Passwortformular */
@@ -74,18 +98,18 @@
             padding: 10px;
         }
 
-        /* Hervorgehobener Text auf dem 2. Bildschirm */
+        /* Hervorgehobener Text auf der zweiten Seite */
         .highlighted-text {
-            font-size: 1.8rem; /* Größere Schriftgröße */
-            font-weight: bold; /* Fettdruck für den Text */
-            padding: 35px; /* Mehr Padding für einen größeren Kasten */
+            font-size: 1.8rem;
+            font-weight: bold;
+            padding: 35px;
             background-color: rgba(255, 255, 255, 0.8);
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
             text-align: center;
-            max-width: 700px; /* Maximale Breite erhöhen */
-            margin: 20px; /* Abstand zum Rand */
+            max-width: 700px;
+            margin: 20px;
         }
 
         .highlighted-text .red {
@@ -129,14 +153,62 @@
             background-color: rgba(200, 0, 0, 0.9);
         }
 
-        /* Zielseite - Bild statt Text "Hallo" */
+        /* Zielseite */
         #santaPage {
             display: none; /* Standardmäßig ausblenden */
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            height: 100vh;
-            background-image: url('https://imgur.com/a/gVwT01S');
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8); /* Leichter Weißfilter für das Bild */
+            z-index: -1;
+        }
+
+        /* Bild auf der Zielseite */
+        #santaPage img {
+            width: auto; /* Bild wird nicht skaliert */
+            height: auto; /* Bild wird nicht skaliert */
+            max-width: 100%; /* Maximale Breite auf 100% setzen, um es responsiv zu machen */
+            max-height: 100%; /* Maximale Höhe auf 100% setzen, um es responsiv zu machen */
+            margin: auto;
+            display: block;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            filter: none; /* Entfernt den verschwommenen Filter für das Bild */
+        }
+
+        /* Hintergrund der Zielseite mit Blur */
+        #santaPage::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://cdn-thumbs.ohmyprints.net/1/e7ffb7f128c8627c0744171ee3df3c6c/817x600/thumbnail/fit.jpg');
             background-size: cover;
             background-position: center;
+            filter: blur(8px); /* Nur der Hintergrund wird unscharf */
+            z-index: -1;
+        }
+
+        /* Textkasten auf der 3. Seite */
+        .text-box {
+            position: absolute;
+            top: 30%;
+            left: 10%;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 400px;
+            font-size: 2rem;
+            color: black;
+            font-weight: bold;
         }
 
     </style>
@@ -144,8 +216,11 @@
 <body>
     <div class="background"></div> <!-- Hintergrundbild -->
 
+    <!-- Schneeflocken generieren -->
+    <div id="snowflakes"></div>
+
     <div id="passwordForm">
-        <h1>Christmas Rätsel</h1>
+        <h1>Weiterleitungssystem</h1>
         <p>Gib das richtige Lösungswort ein, um zu erfahren, ob ihr richtig liegt:</p>
         <input type="text" id="inputField" placeholder="Lösungswort eingeben">
         <button onclick="checkAnswer()">Absenden</button>
@@ -171,7 +246,11 @@
 
     <!-- Zielseite mit Bild -->
     <div id="santaPage">
-        <!-- Hier wird das Bild geladen -->
+        <img src="https://i.imgur.com/ZZUIbFT.png" alt="Weihnachtsbild"> <!-- Bild eingefügt -->
+        <!-- Textkasten auf der 3. Seite -->
+        <div class="text-box">
+            Was nun?
+        </div>
     </div>
 
     <script>
@@ -203,6 +282,24 @@
             document.getElementById("successMessage").style.display = "none"; // Verstecke die Nachricht
             document.getElementById("santaButton").style.display = "none"; // Verstecke den Weihnachtsmann-Button
         }
+
+        // Schneeflocken erstellen
+        function createSnowflakes() {
+            const snowflakesContainer = document.getElementById('snowflakes');
+            const numSnowflakes = 100;
+
+            for (let i = 0; i < numSnowflakes; i++) {
+                const snowflake = document.createElement('div');
+                snowflake.classList.add('snowflake');
+                snowflake.style.left = Math.random() * 100 + 'vw'; // Position zufällig auf der x-Achse
+                snowflake.style.animationDuration = (Math.random() * 5 + 5) + 's'; // Dauer der Animation zufällig
+                snowflake.style.animationDelay = Math.random() * 5 + 's'; // Versatz der Animation zufällig
+                snowflakesContainer.appendChild(snowflake);
+            }
+        }
+
+        // Schneeflocken beim Laden der Seite erstellen
+        window.onload = createSnowflakes;
     </script>
 </body>
 </html>
