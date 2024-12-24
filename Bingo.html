@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weihnachtliches Bingo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet"> <!-- Festliche Schriftart -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Pacifico', cursive;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f8ff; /* Sanftes Weihnachtsblau */
+            background-image: url('https://i.imgur.com/AAVu7fo.jpeg'); /* Das richtige Bild */
+            background-size: cover;
+            background-attachment: fixed;
+            color: white;
+        }
+
+        .container {
+            text-align: center;
+            background-color: rgba(0, 0, 0, 0.6);
+            border-radius: 15px;
+            padding: 30px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            color: #ff4500; /* Weihnachtliches Rot */
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+        }
+
+        .bingo-board {
+            display: grid;
+            grid-template-columns: repeat(5, 100px);
+            grid-template-rows: repeat(5, 100px);
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .bingo-board div {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #28a745; /* Weihnachtliches Grün */
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            height: 100px;
+            width: 100px;
+            color: white;
+            border: 2px solid #fff; /* Weiße Umrandung */
+            transition: background-color 0.3s;
+        }
+
+        .bingo-board div.clicked {
+            background-color: #ff6347; /* Rot bei Klick */
+        }
+
+        .bingo-message {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 3rem;
+            color: #ff6347;
+            font-weight: bold;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Weihnachtliches Bingo</h1>
+        <div id="bingo-board" class="bingo-board"></div>
+    </div>
+
+    <script>
+        // Erstellen der Bingo-Karte mit Text "Test"
+        const board = document.getElementById('bingo-board');
+
+        const bingoTexts = Array.from({ length: 25 }, () => 'Test'); // In jedem Feld steht "Test"
+        let clickedNumbers = [];
+
+        // Funktion zum Erstellen der Bingo-Karte
+        function createBoard() {
+            for (let i = 0; i < 25; i++) {
+                const div = document.createElement('div');
+                div.textContent = bingoTexts[i]; // Text "Test" anstelle einer Zahl
+                div.addEventListener('click', () => handleClick(div, i));
+                board.appendChild(div);
+            }
+        }
+
+        // Funktion, um die Klicks zu handhaben
+        function handleClick(div, index) {
+            if (div.classList.contains('clicked')) {
+                // Wenn es schon angeklickt ist, abklicken
+                div.classList.remove('clicked');
+                clickedNumbers = clickedNumbers.filter(num => num !== index);
+            } else {
+                // Wenn es noch nicht angeklickt ist, anklicken
+                div.classList.add('clicked');
+                clickedNumbers.push(index);
+            }
+            checkBingo();
+        }
+
+        // Überprüfen auf ein Bingo
+        function checkBingo() {
+            // Prüfen auf horizontale Linien
+            for (let i = 0; i < 5; i++) {
+                if (clickedNumbers.includes(i * 5 + 0) && 
+                    clickedNumbers.includes(i * 5 + 1) && 
+                    clickedNumbers.includes(i * 5 + 2) && 
+                    clickedNumbers.includes(i * 5 + 3) && 
+                    clickedNumbers.includes(i * 5 + 4)) {
+                    return; // Kein "Bingo!" Text mehr
+                }
+            }
+
+            // Prüfen auf vertikale Linien
+            for (let i = 0; i < 5; i++) {
+                if (clickedNumbers.includes(i + 0) && 
+                    clickedNumbers.includes(i + 5) && 
+                    clickedNumbers.includes(i + 10) && 
+                    clickedNumbers.includes(i + 15) && 
+                    clickedNumbers.includes(i + 20)) {
+                    return; // Kein "Bingo!" Text mehr
+                }
+            }
+
+            // Prüfen auf diagonale Linien
+            if (clickedNumbers.includes(0) && clickedNumbers.includes(6) && clickedNumbers.includes(12) && clickedNumbers.includes(18) && clickedNumbers.includes(24)) {
+                return; // Kein "Bingo!" Text mehr
+            }
+
+            if (clickedNumbers.includes(4) && clickedNumbers.includes(8) && clickedNumbers.includes(12) && clickedNumbers.includes(16) && clickedNumbers.includes(20)) {
+                return; // Kein "Bingo!" Text mehr
+            }
+        }
+
+        // Bingo-Board erstellen
+        createBoard();
+    </script>
+</body>
+</html>
